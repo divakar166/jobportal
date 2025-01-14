@@ -4,12 +4,10 @@ import axios from "axios";
 
 export const verifyToken = async (token: string, type: string) => {
   try {
+    console.log("Called");
     const response = await axios.post(
-      "http://localhost:8000/api/developer/verify-token/",
-      {
-        token,
-        type,
-      }
+      `http://localhost:8000/api/${type}/verify-token/`,
+      { token }
     );
 
     if (response.data.success) {
@@ -17,13 +15,11 @@ export const verifyToken = async (token: string, type: string) => {
     } else {
       return { error: response.data.error || "Verification failed!" };
     }
-  } catch (error) {
-    if (error) {
-      return {
-        error: error || "An error occurred during verification.",
-      };
-    } else {
-      return { error: "Network error or server not reachable." };
-    }
+  } catch (error: any) {
+    console.error("Error during token verification:", error);
+    return {
+      error:
+        error.response?.data?.error || "An error occurred during verification.",
+    };
   }
 };

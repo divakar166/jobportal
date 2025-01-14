@@ -25,7 +25,7 @@ export default function Navbar() {
     }
   })
 
-  const { isAuthenticated, userType } = useAppSelector((state)=> state.auth)
+  const { isAuthenticated } = useAppSelector((state) => state.auth)
 
   const linkClass = (href: string) =>
     pathname === href ? "h-full dark:text-white border-b-purple-500 border-b-2" : "menu__link dark:text-white text-black h-full"
@@ -72,20 +72,20 @@ export default function Navbar() {
               </div>
             </div>
             <div className="md:ml-auto">
-              { isAuthenticated ? <UserNav /> : (
+              {isAuthenticated ? <UserNav /> : (
                 <div className="flex space-x-2">
-                <Link href='/auth/developer/login'>
-                   <Button>
-                     Find Job
-                   </Button>
-                 </Link>
-                 <Link href='/auth/recruiter/login'>
-                   <Button className="bg-purple-600 hover:bg-purple-500 text-white">
-                     Hire Talent
-                   </Button>
-                 </Link>
-             </div>
-              ) }
+                  <Link href='/auth/developer/login'>
+                    <Button>
+                      Find Job
+                    </Button>
+                  </Link>
+                  <Link href='/auth/recruiter/login'>
+                    <Button className="bg-purple-600 hover:bg-purple-500 text-white">
+                      Hire Talent
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
