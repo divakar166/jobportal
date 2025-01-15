@@ -15,7 +15,6 @@ interface CardWrapperProps {
   children: React.ReactNode;
   headerLabel: string;
   backButtonLabel: string;
-  backButtonHref: string;
   showSocial?: boolean;
   onBackClick?: () => void;
 }
@@ -24,7 +23,6 @@ export const CardWrapper = ({
   children,
   headerLabel,
   backButtonLabel,
-  backButtonHref,
   showSocial,
   onBackClick
 }: CardWrapperProps) => {
@@ -46,7 +44,6 @@ export const CardWrapper = ({
       <CardFooter>
         <BackButton
           label={backButtonLabel}
-          href={backButtonHref}
           onClick={onBackClick}
         />
       </CardFooter>

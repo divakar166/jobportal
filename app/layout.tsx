@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import StoreProvider from "../providers/StoreProvider";
 import { ModeToggle } from "@/components/theme-toggle";
 import { AuthProvider } from "../providers/AuthProvider";
+import { LoaderProvider } from "@/providers/LoaderContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,12 +39,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-            <StoreProvider>
-              <AuthProvider>
+          <StoreProvider>
+            <AuthProvider>
+              <LoaderProvider>
                 {children}
-              </AuthProvider>
-            </StoreProvider>
-            <ModeToggle />
+              </LoaderProvider>
+            </AuthProvider>
+          </StoreProvider>
+          <ModeToggle />
         </ThemeProvider>
       </body>
     </html>

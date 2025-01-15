@@ -3,39 +3,47 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { useLoader } from "@/providers/LoaderContext";
 
 interface BackButtonProps {
-  href: string;
   label: string;
   onClick?: () => void;
 }
 
 export const BackButton = ({
-  href,
   label,
   onClick
 }: BackButtonProps) => {
   const router = useRouter();
+  const { setLoading } = useLoader();
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (onClick) {
-      onClick(); // Call the provided onClick handler
-    } else {
-      router.push(href); // Default behavior
-    }
+
+    // Show the loader
+    setLoading(true);
+
+    // Simulate a short delay to showcase the loader effect
+    setTimeout(() => {
+      if (onClick) {
+        onClick();
+      } else {
+        router.push('/');
+      }
+
+      // Hide the loader after navigation
+      setLoading(false);
+    }, 500); // Adjust delay as needed
   };
   return (
     <Button
       variant="link"
-      className="font-normal w-full"
+      className="font-normal w-full text-black dark:text-white"
       size="sm"
       asChild
       onClick={handleClick}
     >
-      <Link href={href}>
-        {label}
-      </Link>
+      <div className="cursor-pointer">{label}</div>
     </Button>
   )
 }

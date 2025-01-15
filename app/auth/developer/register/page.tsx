@@ -53,8 +53,8 @@ const DevRegister = () => {
   return (
     <CardWrapper
       headerLabel="Find Your Next Opportunity"
-      backButtonHref="/auth/developer/login"
       backButtonLabel="Already have an account?"
+      onBackClick={() => router.push('/auth/developer/login')}
     >
       <Form {...form}>
         <form

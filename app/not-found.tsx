@@ -27,7 +27,6 @@ export default function NotFound() {
       <div className="h-screen w-screen flex justify-center items-center">
         <CardWrapper
           headerLabel="Oops! Something went wrong!"
-          backButtonHref="#" // Keep this dynamic
           backButtonLabel="Go Back"
           onBackClick={() => router.back()} // Ensure it calls the back function
         >
