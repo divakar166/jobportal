@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useEffect, ReactNode } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/lib/store';
-import { loadUserFromStorage } from '@/lib/features/authFeature';
+import { useEffect, ReactNode } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import { loadUserFromStorage } from "@/lib/features/authFeature";
 
 interface AuthProviderProps {
   children: ReactNode;

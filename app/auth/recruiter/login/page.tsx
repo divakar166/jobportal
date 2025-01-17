@@ -46,9 +46,8 @@ const RecruiterLoginForm = () => {
         .then((data) => {
           if (data?.success) {
             setSuccess(data?.success)
-            dispatch(login({ userType: "developer", token: data.token, name: data.name }));
-            console.log("Dispatched login:", { userType: "developer", token: data.token, name: data.name });
-            router.push('/dashboard/developer');
+            dispatch(login({ userType: "recruiter", token: data.token, name: data.name }));
+            router.push('/dashboard/recruiter');
           } else {
             setError(data?.error)
           }
@@ -60,6 +59,7 @@ const RecruiterLoginForm = () => {
     <CardWrapper
       headerLabel="Welcome back"
       backButtonLabel="Don't have an account?"
+      onBackClick={() => router.push('/auth/recruiter/register')}
     >
       <Form {...form}>
         <form
@@ -120,7 +120,7 @@ const RecruiterLoginForm = () => {
             disabled={isPending}
             type="submit"
             className="w-full"
-          >{isPending ? <BeatLoader /> : "Login"}</Button>
+          >{isPending ? <BeatLoader color="#9333EA" /> : "Login"}</Button>
         </form>
       </Form>
     </CardWrapper>

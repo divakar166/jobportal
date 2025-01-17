@@ -19,6 +19,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RecruiterRegisterSchema } from "@/lib/schemas";
 import { recruiterRegister } from "@/actions/recruiterRegister";
+import { BeatLoader } from "react-spinners";
 
 const RecruiterRegisterForm = () => {
   const [success, setSuccess] = useState<string | undefined>("");
@@ -54,6 +55,7 @@ const RecruiterRegisterForm = () => {
     <CardWrapper
       headerLabel="Hire Talent"
       backButtonLabel="Already have an account?"
+      onBackClick={() => router.push('/auth/recruiter/login')}
     >
       <Form {...form}>
         <form
@@ -71,6 +73,7 @@ const RecruiterRegisterForm = () => {
                     <FormControl>
                       <Input
                         {...field}
+                        disabled={isPending}
                         placeholder="XYZ Tech Pvt Ltd"
                         type="text"
                       />
@@ -88,6 +91,7 @@ const RecruiterRegisterForm = () => {
                     <FormControl>
                       <Input
                         {...field}
+                        disabled={isPending}
                         placeholder="john.doe@xyztech.in"
                         type="email"
                       />
@@ -106,6 +110,7 @@ const RecruiterRegisterForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="********"
                       type="password"
                     />
@@ -123,6 +128,7 @@ const RecruiterRegisterForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="-91 952 158 1251"
                       type="text"
                     />
@@ -137,8 +143,9 @@ const RecruiterRegisterForm = () => {
           <Button
             type="submit"
             className="w-full"
+            disabled={isPending}
           >
-            Register
+            {isPending ? <BeatLoader color="#9333EA" /> : "Register"}
           </Button>
         </form>
       </Form>

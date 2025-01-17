@@ -1,27 +1,28 @@
 "use server";
 
 import * as z from "zod";
-import { DeveloperRegisterSchema } from "@/lib/schemas";
+import { RecruiterRegisterSchema } from "@/lib/schemas";
 import axios from "axios";
 
 export const recruiterRegister = async (
-  values: z.infer<typeof DeveloperRegisterSchema>
+  values: z.infer<typeof RecruiterRegisterSchema>
 ) => {
-  const validatedFields = DeveloperRegisterSchema.safeParse(values);
+  const validatedFields = RecruiterRegisterSchema.safeParse(values);
 
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
   }
 
-  const { name, email, password } = validatedFields.data;
+  const { name, email, password, mobile } = validatedFields.data;
 
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/developer/register/",
+      "http://localhost:8000/api/recruiter/register/",
       {
         name,
         email,
         password,
+        mobile,
       }
     );
 

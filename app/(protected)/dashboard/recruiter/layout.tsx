@@ -1,4 +1,4 @@
-import { DeveloperNavbar } from "@/components/dashboard/developer-navbar";
+import { RecruiterNavbar } from "@/components/dashboard/recruiter-navbar";
 
 export default function DeveloperLayout({
   children,
@@ -7,7 +7,7 @@ export default function DeveloperLayout({
 }>) {
   return (
     <main className="h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-50 to-slate-300 dark:from-gray-950 dark:to-gray-700 text-black">
-      <DeveloperNavbar />
+      <RecruiterNavbar />
       {children}
     </main>
   );
