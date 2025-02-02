@@ -7,20 +7,29 @@ import Navbar from "@/components/homepage/navbar";
 import SubscribeSection from "@/components/homepage/subscribe-section";
 import ViewAll from "@/components/homepage/view-all";
 import Loader from "@/components/loader";
-import Spinner from "@/components/spinner";
-import { useLoader } from "@/providers/LoaderContext";
+import { useAppSelector } from "@/lib/hooks";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [loadingState, setLoadingState] = useState(true);
+  const { isAuthenticated, userType } = useAppSelector((state) => state.auth);
+  const router = useRouter();
 
   useEffect(() => {
+    if (isAuthenticated) {
+      if (userType === "recruiter") {
+        router.replace("/dashboard/recruiter");
+        return;
+      }
+    }
     const timeout = setTimeout(() => {
       setLoadingState(false);
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timeout);
-  }, [loadingState]);
+    // setLoadingState(false);
+  }, [isAuthenticated, userType, router]);
 
   if (loadingState) {
     return <Loader />;
