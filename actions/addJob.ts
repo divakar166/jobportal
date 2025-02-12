@@ -29,7 +29,7 @@ export const addJob = async (
 
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/jobs/add-job",
+      "http://localhost:8000/api/jobs/add-job/",
       {
         job_title,
         job_type,
@@ -51,7 +51,7 @@ export const addJob = async (
         },
       }
     );
-
+    console.log(token);
     if (response.status === 201) {
       return { success: response.data.message };
     } else {
@@ -59,6 +59,7 @@ export const addJob = async (
     }
   } catch (error: any) {
     if (error.response) {
+      console.log(error);
       return { error: error.response.data.error || "Failed to add job." };
     }
     return { error: "Something went wrong! Please try again." };

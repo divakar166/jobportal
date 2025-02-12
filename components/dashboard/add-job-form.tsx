@@ -30,11 +30,14 @@ import { format } from "date-fns";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { Calendar } from "../ui/calendar";
 import { cn } from "@/lib/utils";
+import { addJob } from "@/actions/addJob";
+import { useAppSelector } from "@/lib/hooks";
 
 const AddJobForm = () => {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
+  const { token } = useAppSelector((state) => state.auth);
   const form = useForm<z.infer<typeof AddJobSchema>>({
     resolver: zodResolver(AddJobSchema),
     defaultValues: {
@@ -54,7 +57,14 @@ const AddJobForm = () => {
     setError("")
     setSuccess("")
     startTransition(() => {
-      console.log("ok")
+      addJob(values, token || "")
+        .then((data) => {
+          if (data?.success) {
+            setSuccess(data?.success)
+          } else {
+            setError(data?.error)
+          }
+        })
     })
   }
   return (
