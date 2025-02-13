@@ -120,7 +120,7 @@ const RecruiterLoginForm = () => {
             disabled={isPending}
             type="submit"
             className="w-full"
-          >{isPending ? <BeatLoader color="#9333EA" /> : "Login"}</Button>
+          >{isPending ? <BeatLoader color="white" /> : "Login"}</Button>
         </form>
       </Form>
     </CardWrapper>

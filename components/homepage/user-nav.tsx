@@ -30,7 +30,11 @@ const UserNav = () => {
     setLoading(true);
     dispatch(logout());
     setTimeout(() => {
-      router.push('/auth/developer/login');
+      if (userType == 'developer') {
+        router.push('/auth/developer/login');
+      } else {
+        router.push('/auth/recruiter/login');
+      }
       setLoading(false);
     }, 1000);
   }

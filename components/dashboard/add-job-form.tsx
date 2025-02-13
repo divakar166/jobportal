@@ -50,7 +50,7 @@ const AddJobForm = () => {
       skills: "",
       salary: "",
       openings: 1,
-      about: ""
+      about: "",
     },
   });
   const onSubmit = (values: z.infer<typeof AddJobSchema>) => {
@@ -61,6 +61,7 @@ const AddJobForm = () => {
         .then((data) => {
           if (data?.success) {
             setSuccess(data?.success)
+            form.reset()
           } else {
             setError(data?.error)
           }
@@ -375,7 +376,7 @@ const AddJobForm = () => {
             disabled={isPending}
             type="submit"
             className="w-full"
-          >{isPending ? <BeatLoader /> : "Add Job"}</Button>
+          >{isPending ? <BeatLoader color="white" /> : "Add Job"}</Button>
         </form>
       </Form>
     </div>

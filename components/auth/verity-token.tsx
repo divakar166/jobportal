@@ -50,7 +50,6 @@ const VerifyToken = () => {
     <CardWrapper
       headerLabel="Confirming your verification"
       backButtonLabel="Back to login"
-      backButtonHref="/auth/developer/login"
     >
       <div className="flex items-center w-full justify-center">
         {!success && !error && <BeatLoader color={'white'} />}
