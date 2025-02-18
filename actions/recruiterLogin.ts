@@ -17,7 +17,7 @@ export const recruiterLogin = async (
 
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/recruiter/login/",
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/recruiter/login/`,
       {
         email,
         password,
@@ -28,6 +28,7 @@ export const recruiterLogin = async (
       const { message, token, name } = response.data;
       return { success: message, token, name };
     } else {
+      console.log(response);
       return { error: response.data.error || "Unknown error occurred." };
     }
   } catch (error: any) {

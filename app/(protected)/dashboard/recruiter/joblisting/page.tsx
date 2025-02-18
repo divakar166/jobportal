@@ -1,7 +1,10 @@
 "use client"
 
-const JobListing = () => {
+import { JobsListingRecruiter } from "@/components/dashboard/joblisting-recruiter"
+import { useAppSelector } from "@/lib/hooks"
 
+const JobListing = () => {
+  const token = useAppSelector((state) => state.auth.token)
   return (
     <>
       <div className="flex-col flex">
@@ -10,7 +13,7 @@ const JobListing = () => {
             <h2 className="text-2xl font-bold tracking-tight dark:text-white">Job Listings</h2>
           </div>
           <div>
-            {/* <JobsListingRecruiter /> */}
+            <JobsListingRecruiter token={token || ""} />
           </div>
         </div>
       </div>

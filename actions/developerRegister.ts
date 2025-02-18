@@ -1,33 +1,38 @@
-"use server"
+"use server";
 
-import * as z from 'zod';
-import { DeveloperRegisterSchema } from '@/lib/schemas';
-import axios from 'axios';
+import * as z from "zod";
+import { DeveloperRegisterSchema } from "@/lib/schemas";
+import axios from "axios";
 
-
-export const developerRegister = async (values: z.infer<typeof DeveloperRegisterSchema>) => {
+export const developerRegister = async (
+  values: z.infer<typeof DeveloperRegisterSchema>
+) => {
   const validatedFields = DeveloperRegisterSchema.safeParse(values);
-  
-  if(!validatedFields.success){
-    return { error:"Invalid fields!" }
+
+  if (!validatedFields.success) {
+    return { error: "Invalid fields!" };
   }
 
-  const { name, email, password} = validatedFields.data;
+  const { name, email, password } = validatedFields.data;
 
-  try{
-    const response = await axios.post('http://localhost:8000/api/developer/register/', {
-      name,
-      email,
-      password
-    })
-  
-    if (response.status === 201){
+  try {
+    const response = await axios.post(
+      "https://jobportal-server-83v1.onrender.com/api/developer/register/",
+      {
+        name,
+        email,
+        password,
+      }
+    );
+    console.log(response);
+
+    if (response.status === 201) {
       const { message } = response.data;
       return { success: message };
     } else {
-      return { error: response.data.error || "Unknown error occurred."}
+      return { error: response.data.error || "Unknown error occurred." };
     }
-  }  catch (error: any) {
+  } catch (error: any) {
     if (error.response) {
       const { data, status } = error.response;
 
@@ -41,7 +46,8 @@ export const developerRegister = async (values: z.infer<typeof DeveloperRegister
     }
 
     console.error(error);
-    return { error: "Network error. Please check your connection and try again." };
+    return {
+      error: "Network error. Please check your connection and try again.",
+    };
   }
-
-}
+};
