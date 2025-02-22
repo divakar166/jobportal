@@ -18,7 +18,7 @@ import { FormSuccess } from "@/components/form-success";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RecruiterRegisterSchema } from "@/lib/schemas";
-import { recruiterRegister } from "@/actions/recruiterRegister";
+import { recruiterRegister } from "@/actions/recruiter";
 import { BeatLoader } from "react-spinners";
 
 const RecruiterRegisterForm = () => {

@@ -18,7 +18,7 @@ import { FormSuccess } from "@/components/form-success";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { DeveloperRegisterSchema } from "@/lib/schemas";
-import { developerRegister } from "@/actions/developerRegister";
+import { developerRegister } from "@/actions/developers";
 import { BeatLoader } from "react-spinners";
 
 const DevRegister = () => {

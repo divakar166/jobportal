@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
-import { developerLogin } from "@/actions/developerLogin";
+import { developerLogin } from "@/actions/developers";
 import Link from "next/link";
 import { BeatLoader } from "react-spinners";
 import { FormError } from "@/components/form-error";

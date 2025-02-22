@@ -141,7 +141,7 @@ export const columns: ColumnDef<JobListing>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(job.id)}
             >
-              Copy Job ID
+              Edit Job
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View job details</DropdownMenuItem>

@@ -10,6 +10,7 @@ import Logo from "./logo";
 import { useState } from "react";
 import { useAppSelector } from "@/lib/hooks";
 import UserNav from "./user-nav";
+import GradientText from "./GradientText";
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -50,7 +51,7 @@ export default function Navbar() {
                 <div className="w-8 h-8 flex items-center justify-center" >
                   <Logo />
                 </div>
-                <span className="font-bold text-lg ml-2 text-black dark:text-white">
+                <span className="font-bold text-xl ml-2 text-black dark:text-white">
                   Connect
                 </span>
               </Link>

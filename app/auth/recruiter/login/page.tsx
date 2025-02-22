@@ -22,12 +22,15 @@ import { RecruiterLoginSchema } from "@/lib/schemas";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/features/authFeature";
 import { useDispatch } from "react-redux";
-import { recruiterLogin } from "@/actions/recruiterLogin";
+import { recruiterLogin } from "@/actions/recruiter";
+import { useLoader } from "@/providers/LoaderContext";
 
 const RecruiterLoginForm = () => {
   const [error, setError] = useState<string | undefined>()
   const [success, setSuccess] = useState<string | undefined>()
   const [isPending, startTransition] = useTransition();
+  // const [loadingState, setLoadingState] = useState(false);
+  const { setLoading } = useLoader()
 
   const form = useForm<z.infer<typeof RecruiterLoginSchema>>({
     resolver: zodResolver(RecruiterLoginSchema),
@@ -47,9 +50,14 @@ const RecruiterLoginForm = () => {
           if (data?.success) {
             setSuccess(data?.success)
             dispatch(login({ userType: "recruiter", token: data.token, name: data.name }));
+            setLoading(true);
             router.push('/dashboard/recruiter');
+            setTimeout(() => {
+              setLoading(false);
+            }, 1000);
           } else {
             setError(data?.error)
+            setLoading(false);
           }
         })
     })
