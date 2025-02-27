@@ -5,6 +5,7 @@ import {
   CaretSortIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
+  TrashIcon,
 } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -39,6 +40,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { fetchJobsByRecruiter } from "@/lib/apiUtils";
+import { DeleteJobAlert } from "./deletejobdialog";
+import { toast } from "sonner";
 type JobListing = {
   applyBy: Date | null;
   company_name: string;
@@ -58,7 +61,25 @@ type JobListing = {
   updatedAt: Date | null;
 };
 
-export const columns: ColumnDef<JobListing>[] = [
+const handleDeleteJob = async (id: string, token: string, setJobs: Function) => {
+  try {
+    const res = await fetch(`http://localhost:8000/api/jobs/${id}/delete/`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete job");
+    setJobs((prevJobs: JobListing[]) => prevJobs.filter((job) => job.id !== id));
+    toast.success("Job deleted successfully!")
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    alert("Failed to delete job");
+  }
+};
+
+const getColumns = (token: string, setJobs: Function): ColumnDef<JobListing>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -139,12 +160,12 @@ export const columns: ColumnDef<JobListing>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(job.id)}
+              className="cursor-pointer"
             >
               Edit Job
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View job details</DropdownMenuItem>
+            <DeleteJobAlert jobId={job.id} onDelete={() => handleDeleteJob(job.id, token, setJobs)} />
+            <DropdownMenuItem className="cursor-pointer" >View job details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -173,8 +194,7 @@ export function JobsListingRecruiter({ token }: { token: string }) {
           throw new Error(response.error);
         }
         if (response?.jobs) {
-          console.log(response?.jobs);
-          setJobs(response.jobs); // Set jobs
+          setJobs(response.jobs);
         }
       } catch (err) {
         setError("Failed to fetch job listings.");
@@ -185,7 +205,7 @@ export function JobsListingRecruiter({ token }: { token: string }) {
 
     fetchJobs()
   }, [token]);
-
+  const columns = getColumns(token, setJobs)
   const table = useReactTable({
     data: jobs,
     columns,
@@ -205,6 +225,9 @@ export function JobsListingRecruiter({ token }: { token: string }) {
     },
   });
 
+  const selectedJobIds = Object.keys(rowSelection).map((key) => key);
+  console.log(selectedJobIds)
+
   if (loading) return <div className="text-center text-2xl font-bold text-gray-500 dark:text-white">Loading jobs...</div>;
   // if (error) return <div className="text-center text-2xl font-bold text-red-500 dark:text-white">{error}</div>;
 
@@ -213,12 +236,22 @@ export function JobsListingRecruiter({ token }: { token: string }) {
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter jobs..."
-          value={(table.getColumn("company_name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("job_title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("company_name")?.setFilterValue(event.target.value)
+            table.getColumn("job_title")?.setFilterValue(event.target.value)
           }
           className="max-w-sm dark:border-slate-200 border-gray-800"
         />
+        {selectedJobIds.length > 0 && (
+          <Button
+            variant="destructive"
+            className="ml-4"
+            onClick={() => console.log(selectedJobIds)}
+          >
+            <TrashIcon className="mr-2 h-4 w-4" />
+            Delete Selected
+          </Button>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto dark:text-white dark:border-slate-200 border-gray-800 dark:hover:bg-gray-900">

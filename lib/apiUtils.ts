@@ -12,7 +12,6 @@ export const fetchJobsByRecruiter = async (token: string) => {
       }
     );
     console.log("Jobs fetched successfully");
-    console.log(response.data);
     return { jobs: response.data };
   } catch (error) {
     console.error("Error fetching jobs", error);

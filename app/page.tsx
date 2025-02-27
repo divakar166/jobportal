@@ -28,7 +28,6 @@ export default function Home() {
     }, 500);
 
     return () => clearTimeout(timeout);
-    // setLoadingState(false);
   }, [isAuthenticated, userType, router]);
 
   if (loadingState) {

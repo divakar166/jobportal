@@ -2,6 +2,7 @@
 import { RecruiterNavbar } from "@/components/dashboard/recruiter-navbar";
 import Loader from "@/components/loader";
 import { useLoader } from "@/providers/LoaderContext";
+import { Toaster } from "@/components/ui/sonner"
 
 export default function DeveloperLayout({
   children,
@@ -18,6 +19,7 @@ export default function DeveloperLayout({
       )}
       <RecruiterNavbar />
       {children}
+      <Toaster />
     </main>
   );
 }
