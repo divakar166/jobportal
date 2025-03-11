@@ -5,7 +5,6 @@ import {
   CaretSortIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
-  TrashIcon,
 } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -27,7 +26,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -42,6 +40,8 @@ import {
 import { fetchJobsByRecruiter } from "@/lib/apiUtils";
 import { DeleteJobAlert } from "./deletejobdialog";
 import { toast } from "sonner";
+import Spinner from "../spinner";
+import EditJobModal from "./edit-job-modal";
 type JobListing = {
   applyBy: Date | null;
   company_name: string;
@@ -61,7 +61,7 @@ type JobListing = {
   updatedAt: Date | null;
 };
 
-const handleDeleteJob = async (id: string, token: string, setJobs: Function) => {
+const handleDeleteJob = async (id: string, token: string, setJobs: React.Dispatch<React.SetStateAction<JobListing[]>>) => {
   try {
     const res = await fetch(`http://localhost:8000/api/jobs/${id}/delete/`, {
       method: "DELETE",
@@ -70,16 +70,28 @@ const handleDeleteJob = async (id: string, token: string, setJobs: Function) => 
       },
     });
 
-    if (!res.ok) throw new Error("Failed to delete job");
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to delete job");
+    }
     setJobs((prevJobs: JobListing[]) => prevJobs.filter((job) => job.id !== id));
     toast.success("Job deleted successfully!")
   } catch (error) {
     console.error("Error deleting job:", error);
-    alert("Failed to delete job");
+
+    let errorMessage = "An unexpected error occurred";
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === "string") {
+      errorMessage = error;
+    }
+
+    toast.error(errorMessage);
   }
 };
 
-const getColumns = (token: string, setJobs: Function): ColumnDef<JobListing>[] => [
+const getColumns = (token: string, setJobs: React.Dispatch<React.SetStateAction<JobListing[]>>): ColumnDef<JobListing>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -145,6 +157,20 @@ const getColumns = (token: string, setJobs: Function): ColumnDef<JobListing>[] =
     },
   },
   {
+    id: "status",
+    header: () => (<div className="text-right">Status</div>),
+    cell: ({ row }) => {
+      const applyBy = row.getValue("apply_by") as string;
+      const isExpired = new Date(applyBy) < new Date();
+
+      return (
+        <div className={`text-right font-medium ${isExpired ? "text-red-500" : "text-green-500"}`}>
+          {isExpired ? "Expired" : "Active"}
+        </div>
+      );
+    },
+  },
+  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
@@ -159,13 +185,13 @@ const getColumns = (token: string, setJobs: Function): ColumnDef<JobListing>[] =
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <EditJobModal jobId={job.id} jobDetails={job} onEditSave={() => handleDeleteJob(job.id, token, setJobs)} />
+            <DeleteJobAlert jobId={job.id} onDelete={() => handleDeleteJob(job.id, token, setJobs)} />
             <DropdownMenuItem
               className="cursor-pointer"
             >
-              Edit Job
+              Job details
             </DropdownMenuItem>
-            <DeleteJobAlert jobId={job.id} onDelete={() => handleDeleteJob(job.id, token, setJobs)} />
-            <DropdownMenuItem className="cursor-pointer" >View job details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -183,7 +209,6 @@ export function JobsListingRecruiter({ token }: { token: string }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [jobs, setJobs] = useState<JobListing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -196,8 +221,8 @@ export function JobsListingRecruiter({ token }: { token: string }) {
         if (response?.jobs) {
           setJobs(response.jobs);
         }
-      } catch (err) {
-        setError("Failed to fetch job listings.");
+      } catch (error) {
+        console.log(`Failed to fetch job listings: ${error}`);
       } finally {
         setLoading(false);
       }
@@ -228,9 +253,6 @@ export function JobsListingRecruiter({ token }: { token: string }) {
   const selectedJobIds = Object.keys(rowSelection).map((key) => key);
   console.log(selectedJobIds)
 
-  if (loading) return <div className="text-center text-2xl font-bold text-gray-500 dark:text-white">Loading jobs...</div>;
-  // if (error) return <div className="text-center text-2xl font-bold text-red-500 dark:text-white">{error}</div>;
-
   return (
     <div className="w-full mb-10">
       <div className="flex items-center py-4">
@@ -242,16 +264,6 @@ export function JobsListingRecruiter({ token }: { token: string }) {
           }
           className="max-w-sm dark:border-slate-200 border-gray-800"
         />
-        {selectedJobIds.length > 0 && (
-          <Button
-            variant="destructive"
-            className="ml-4"
-            onClick={() => console.log(selectedJobIds)}
-          >
-            <TrashIcon className="mr-2 h-4 w-4" />
-            Delete Selected
-          </Button>
-        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto dark:text-white dark:border-slate-200 border-gray-800 dark:hover:bg-gray-900">
@@ -319,7 +331,9 @@ export function JobsListingRecruiter({ token }: { token: string }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {
+                    loading ? <Spinner /> : "No Results"
+                  }
                 </TableCell>
               </TableRow>
             )}
