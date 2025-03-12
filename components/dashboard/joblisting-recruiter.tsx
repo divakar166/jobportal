@@ -24,7 +24,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -42,6 +41,8 @@ import { DeleteJobAlert } from "./deletejobdialog";
 import { toast } from "sonner";
 import Spinner from "../spinner";
 import EditJobModal from "./edit-job-modal";
+import JobDetailModal from "./job-details-modal";
+
 type JobListing = {
   applyBy: Date | null;
   company_name: string;
@@ -61,7 +62,42 @@ type JobListing = {
   updatedAt: Date | null;
 };
 
-const handleDeleteJob = async (id: string, token: string, setJobs: React.Dispatch<React.SetStateAction<JobListing[]>>) => {
+const handleEditJob = async (
+  id: string,
+  updatedData: Partial<JobListing>,
+  token: string,
+  setJobs: React.Dispatch<React.SetStateAction<JobListing[]>>
+) => {
+  try {
+    const res = await fetch(`http://localhost:8000/api/jobs/${id}/update/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to update job");
+    }
+
+    const updatedJob = await res.json();
+
+    setJobs((prevJobs) =>
+      prevJobs.map((job) => (job.id === id ? { ...job, ...updatedJob } : job))
+    );
+
+    toast.success("Job updated successfully!");
+  } catch (error) {
+    console.error("Error updating job:", error);
+    toast.error(error instanceof Error ? error.message : "An unexpected error occurred");
+  }
+};
+
+const handleDeleteJob = async (id: string, token: string, setJobs: React.Dispatch<React.SetStateAction<JobListing[]>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+  setLoading(true);
   try {
     const res = await fetch(`http://localhost:8000/api/jobs/${id}/delete/`, {
       method: "DELETE",
@@ -74,24 +110,19 @@ const handleDeleteJob = async (id: string, token: string, setJobs: React.Dispatc
       const errorData = await res.json();
       throw new Error(errorData.message || "Failed to delete job");
     }
-    setJobs((prevJobs: JobListing[]) => prevJobs.filter((job) => job.id !== id));
-    toast.success("Job deleted successfully!")
+
+    setJobs((prevJobs) => prevJobs.filter((job) => job.id !== id));
+    toast.success("Job deleted successfully!");
   } catch (error) {
     console.error("Error deleting job:", error);
-
-    let errorMessage = "An unexpected error occurred";
-
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else if (typeof error === "string") {
-      errorMessage = error;
-    }
-
-    toast.error(errorMessage);
+    toast.error(error instanceof Error ? error.message : "An unexpected error occurred");
+  } finally {
+    setLoading(false);
   }
 };
 
-const getColumns = (token: string, setJobs: React.Dispatch<React.SetStateAction<JobListing[]>>): ColumnDef<JobListing>[] => [
+
+const getColumns = (token: string, setJobs: React.Dispatch<React.SetStateAction<JobListing[]>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<JobListing>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -185,13 +216,14 @@ const getColumns = (token: string, setJobs: React.Dispatch<React.SetStateAction<
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <EditJobModal jobId={job.id} jobDetails={job} onEditSave={() => handleDeleteJob(job.id, token, setJobs)} />
-            <DeleteJobAlert jobId={job.id} onDelete={() => handleDeleteJob(job.id, token, setJobs)} />
-            <DropdownMenuItem
-              className="cursor-pointer"
-            >
-              Job details
-            </DropdownMenuItem>
+            <EditJobModal
+              jobDetails={job}
+              onEditSave={(updatedData) => handleEditJob(job.id, updatedData, token, setJobs)}
+            />
+            <DeleteJobAlert jobId={job.id} onDelete={() => handleDeleteJob(job.id, token, setJobs, setLoading)} />
+            <JobDetailModal
+              jobDetails={job}
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -211,26 +243,28 @@ export function JobsListingRecruiter({ token }: { token: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchJobs = async () => {
       try {
         const response = await fetchJobsByRecruiter(token);
-
-        if (response.error) {
-          throw new Error(response.error);
-        }
-        if (response?.jobs) {
+        if (response.error) throw new Error(response.error);
+        if (response.jobs && isMounted) {
           setJobs(response.jobs);
         }
       } catch (error) {
-        console.log(`Failed to fetch job listings: ${error}`);
+        console.error(`Failed to fetch job listings: ${error}`);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
-    fetchJobs()
+    fetchJobs();
+    return () => {
+      isMounted = false;
+    };
   }, [token]);
-  const columns = getColumns(token, setJobs)
+
+  const columns = getColumns(token, setJobs, setLoading)
   const table = useReactTable({
     data: jobs,
     columns,
