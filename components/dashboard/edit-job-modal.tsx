@@ -60,7 +60,7 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
           Edit Job
         </DropdownMenuItem>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-screen-lg w-full">
         <DialogHeader>
           <DialogTitle>Edit Job</DialogTitle>
         </DialogHeader>

@@ -2,8 +2,46 @@
 
 import { ApplicationOverTimeChart } from "@/components/dashboard/applications-chart"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { fetchJobListingCount } from "@/lib/apiUtils";
+import { useAppSelector } from "@/lib/hooks";
+import { useEffect, useState } from "react";
+
+type JobListing = {
+  total?: number;
+  active?: number;
+  expired?: number;
+  error?: string;
+};
 
 export default function RecruiterDashboard() {
+  const token = useAppSelector((state) => state.auth.token) || "";
+  const [loading, setLoading] = useState(true);
+  const [jobListing, setJobListing] = useState<JobListing>()
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchJobs = async () => {
+      try {
+        const response = await fetchJobListingCount(token);
+        if ("error" in response) {
+          setJobListing({ total: 0, active: 0, expired: 0, error: response.error });
+        } else {
+          setJobListing({ ...response, error: undefined });
+        }
+      } catch (error) {
+        console.error(`Failed to fetch job listings: ${error}`);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchJobs();
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
+
+
   return (
     <>
       <div className="flex flex-col">
@@ -22,10 +60,23 @@ export default function RecruiterDashboard() {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">3</div>
-                <p className="text-xs text-muted-foreground">
-                  2 Active, 1 Expired
-                </p>
+                {loading ? (
+                  <div className="flex animate-pulse space-x-4">
+                    <div className="flex-1 space-y-1 py-1">
+                      <div className="h-6 w-1/3 rounded bg-gray-200"></div>
+                      <div className="space-y-1">
+                        <div className="h-6 w-1/2 rounded bg-gray-200"></div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{jobListing?.total}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {jobListing?.active} Active, {jobListing?.expired} Expired
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
             <Card>
@@ -38,10 +89,23 @@ export default function RecruiterDashboard() {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+2350</div>
-                <p className="text-xs text-muted-foreground">
-                  +180.1% from last month
-                </p>
+                {loading ? (
+                  <div className="flex animate-pulse space-x-4">
+                    <div className="flex-1 space-y-1 py-1">
+                      <div className="h-6 w-1/3 rounded bg-gray-200"></div>
+                      <div className="space-y-1">
+                        <div className="h-6 w-1/2 rounded bg-gray-200"></div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">+2350</div>
+                    <p className="text-xs text-muted-foreground">
+                      +180.1% from last month
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
             <Card>
@@ -52,10 +116,23 @@ export default function RecruiterDashboard() {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+12,234</div>
-                <p className="text-xs text-muted-foreground">
-                  +19% from last month
-                </p>
+                {loading ? (
+                  <div className="flex animate-pulse space-x-4">
+                    <div className="flex-1 space-y-1 py-1">
+                      <div className="h-6 w-1/3 rounded bg-gray-200"></div>
+                      <div className="space-y-1">
+                        <div className="h-6 w-1/2 rounded bg-gray-200"></div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">+12,234</div>
+                    <p className="text-xs text-muted-foreground">
+                      +19% from last month
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
             <Card>
@@ -68,10 +145,23 @@ export default function RecruiterDashboard() {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+573</div>
-                <p className="text-xs text-muted-foreground">
-                  +201 since last hour
-                </p>
+                {loading ? (
+                  <div className="flex animate-pulse space-x-4">
+                    <div className="flex-1 space-y-1 py-1">
+                      <div className="h-6 w-1/3 rounded bg-gray-200"></div>
+                      <div className="space-y-1">
+                        <div className="h-6 w-1/2 rounded bg-gray-200"></div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">+573</div>
+                    <p className="text-xs text-muted-foreground">
+                      +201 since last hour
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>

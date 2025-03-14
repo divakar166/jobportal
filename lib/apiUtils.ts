@@ -18,3 +18,25 @@ export const fetchJobsByRecruiter = async (token: string) => {
     return { error: "Failed to fetch jobs." };
   }
 };
+
+export const fetchJobListingCount = async (token: string) => {
+  try {
+    const response = await axios.get(
+      "http://localhost:8000/api/jobs/recruiter/count",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return {
+      total: response.data.total,
+      active: response.data.active,
+      expired: response.data.expired,
+    };
+  } catch (error) {
+    console.error("Error fetching job listing counts:", error);
+    return { error: "Failed to fetch job listing counts." };
+  }
+};
