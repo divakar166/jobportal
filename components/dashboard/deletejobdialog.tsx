@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -11,13 +11,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { RotatingLines } from "react-loader-spinner";
 
 export function DeleteJobAlert({ jobId, onDelete }: { jobId: string; onDelete: (id: string) => Promise<void> }) {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const handleDelete = async () => {
-    await onDelete(jobId); // Call delete function
-    setOpen(false); // Close the dialog after deletion
+    startTransition(async () => {
+      await onDelete(jobId);
+      setOpen(false);
+    })
   };
 
   return (
@@ -36,8 +40,12 @@ export function DeleteJobAlert({ jobId, onDelete }: { jobId: string; onDelete: (
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={() => setOpen(false)}>Cancel</AlertDialogCancel>
-          <Button variant="destructive" onClick={handleDelete}>
-            Delete
+          <Button
+            variant="destructive"
+            disabled={isPending}
+            onClick={handleDelete}
+          >
+            {isPending ? <RotatingLines strokeColor="white" /> : "Delete"}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

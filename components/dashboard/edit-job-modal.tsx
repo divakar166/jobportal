@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
+// import Spinner from "../spinner";
+import { RotatingLines } from 'react-loader-spinner'
 
 type JobListing = {
   applyBy: Date | null;
@@ -37,6 +39,7 @@ type EditJobModalProps = {
 
 const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<PartialJobListing>({
     defaultValues: {
@@ -49,8 +52,10 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
   });
 
   const handleEditSave: SubmitHandler<PartialJobListing> = async (data) => {
-    await onEditSave(data);
-    setOpen(false);
+    startTransition(async () => {
+      await onEditSave(data);
+      setOpen(false);
+    })
   };
 
   return (
@@ -75,7 +80,12 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
                   <FormItem>
                     <FormLabel>Job Title</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Software Developer II" className="border border-slate-400" />
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Software Developer II"
+                        className="border border-slate-400"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -89,7 +99,12 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
                   <FormItem>
                     <FormLabel>Company Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Google" className="border border-slate-400" />
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Google"
+                        className="border border-slate-400"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -103,7 +118,12 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
                   <FormItem>
                     <FormLabel>Salary</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="$120,000" className="border border-slate-400" />
+                      <Input
+                        {...field}
+                        placeholder="$120,000"
+                        className="border border-slate-400"
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,7 +137,7 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
                   <FormItem>
                     <FormLabel>Job Type</FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} disabled={isPending} value={field.value}>
                         <SelectTrigger className="border border-slate-400">
                           <SelectValue placeholder="Full Time" />
                         </SelectTrigger>
@@ -140,7 +160,7 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
                   <FormItem>
                     <FormLabel>Job Location</FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} disabled={isPending} value={field.value}>
                         <SelectTrigger className="border border-slate-400">
                           <SelectValue placeholder="On-site" />
                         </SelectTrigger>
@@ -161,7 +181,10 @@ const EditJobModal = ({ jobDetails, onEditSave }: EditJobModalProps) => {
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Save Changes</Button>
+              <Button
+                type="submit"
+                disabled={isPending}
+              >{isPending ? <RotatingLines strokeColor="white" /> : "Save Changes"}</Button>
             </DialogFooter>
           </form>
         </Form>
