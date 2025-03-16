@@ -66,6 +66,9 @@ const config: Config = {
       animation: {
         gradient: "gradient 8s linear infinite",
       },
+      screens: {
+        slg: "950px",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

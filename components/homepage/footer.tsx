@@ -9,7 +9,7 @@ import Logo from "./logo";
 
 const Footer = () => {
   return (
-    <div className="px-10 mb-4 w-full">
+    <div className="px-10 pb-4 w-full">
       {/* <div>Made by <a href="https://github.com/divakar166" className="text-lg font-bold bg-gradient-to-b from-[#870000] to-[#190A05] dark:bg-gradient-to-r dark:from-[#c471f5] dark:to-[#fa71cd] bg-clip-text" style={{"-webkit-text-fill-color":"transparent"}}>Divakar Singh</a></div> */}
       <div className="flex justify-around items-center w-full pb-4 mb-10">
         <div className="w-[10%] ">

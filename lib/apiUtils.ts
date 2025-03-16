@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const fetchJobsByRecruiter = async (token: string) => {
   try {
-    console.log("Sending request to fetch jobs");
     const response = await axios.get(
       "http://localhost:8000/api/jobs/recruiter",
       {
@@ -11,7 +10,17 @@ export const fetchJobsByRecruiter = async (token: string) => {
         },
       }
     );
-    console.log("Jobs fetched successfully");
+    return { jobs: response.data };
+  } catch (error) {
+    console.error("Error fetching jobs", error);
+    return { error: "Failed to fetch jobs." };
+  }
+};
+
+export const fetchJobs = async () => {
+  try {
+    const response = await axios.get("http://localhost:8000/api/jobs");
+    console.log(response.data);
     return { jobs: response.data };
   } catch (error) {
     console.error("Error fetching jobs", error);
