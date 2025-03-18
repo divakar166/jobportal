@@ -19,8 +19,8 @@ type JobListing = {
   openings: number;
   recruiterId: string;
   salary: string;
-  skills: string | string[];
-  startDate: Date | null;
+  skills: string;
+  start_date: string | null;
   job_title: string;
   createdAt: Date | null;
   updatedAt: Date | null;
@@ -55,6 +55,7 @@ const Jobs = () => {
         if (response.error) throw new Error(response.error);
         if (response.jobs && isMounted) {
           setJobs(response.jobs);
+          console.log(response.jobs)
         }
       } catch (error) {
         console.error(`Failed to fetch job listings: ${error}`);
@@ -82,7 +83,6 @@ const Jobs = () => {
     return () => window.removeEventListener("resize", updateJobsPerPage);
   }, []);
 
-  // Pagination Logic
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
   const paginatedJobs = jobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
 
