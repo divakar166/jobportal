@@ -10,7 +10,7 @@ import Logo from "./logo";
 import { useState } from "react";
 import { useAppSelector } from "@/lib/hooks";
 import UserNav from "./user-nav";
-import GradientText from "./GradientText";
+// import GradientText from "./GradientText";
 
 export default function Navbar() {
   const pathname = usePathname()

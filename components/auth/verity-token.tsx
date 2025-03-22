@@ -44,7 +44,7 @@ const VerifyToken = () => {
     };
 
     submitToken();
-  }, [token, type]);
+  }, [token, type, router]);
 
   return (
     <CardWrapper
