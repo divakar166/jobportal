@@ -13,6 +13,7 @@ type JobListing = {
   description: string;
   experience: string;
   id: string;
+  job_id: string;
   job_location: string;
   job_type: string;
   location: string;

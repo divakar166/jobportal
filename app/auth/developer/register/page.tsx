@@ -20,11 +20,13 @@ import { useRouter } from "next/navigation";
 import { DeveloperRegisterSchema } from "@/lib/schemas";
 import { developerRegister } from "@/actions/developers";
 import { BeatLoader } from "react-spinners";
+import { useLoader } from "@/providers/LoaderContext";
 
 const DevRegister = () => {
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const { setLoading } = useLoader()
   const router = useRouter();
   const form = useForm<z.infer<typeof DeveloperRegisterSchema>>({
     resolver: zodResolver(DeveloperRegisterSchema),
@@ -43,8 +45,12 @@ const DevRegister = () => {
           if (data?.success) {
             setSuccess(data?.success)
             setTimeout(() => {
+              setLoading(true)
+            }, 1000)
+            setTimeout(() => {
+              setLoading(false)
               router.push('/auth/developer/login');
-            }, 5000)
+            }, 3000)
           }
           setError(data?.error)
         })

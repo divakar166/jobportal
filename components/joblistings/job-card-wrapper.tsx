@@ -16,6 +16,7 @@ interface JobData {
   description: string;
   experience: string;
   id: string;
+  job_id: string;
   job_location: string;
   job_type: string;
   location: string;
@@ -40,14 +41,21 @@ const jobTypeMapping: Record<string, string> = {
 };
 
 const timeAgo = (startDate: string | null): string => {
-  console.log(startDate)
-  if (!startDate) {
-    return '1'
-  }
+  if (!startDate) return 'Unknown';
+
   const start = new Date(startDate);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - start.getTime()) / 1000);
   const diffInDays = Math.floor(diffInSeconds / 86400);
+
+  if (diffInDays < 0) {
+    const futureDays = Math.abs(diffInDays);
+    if (futureDays === 1) return "in 1 day";
+    if (futureDays < 7) return `in ${futureDays} days`;
+    if (futureDays < 30) return `in ${Math.floor(futureDays / 7)} week${futureDays < 14 ? "" : "s"}`;
+    if (futureDays < 365) return `in ${Math.floor(futureDays / 30)} month${futureDays < 60 ? "" : "s"}`;
+    return `in ${Math.floor(futureDays / 365)} year${futureDays < 730 ? "" : "s"}`;
+  }
 
   if (diffInDays === 0) return "Today";
   if (diffInDays === 1) return "1 day ago";
@@ -56,7 +64,8 @@ const timeAgo = (startDate: string | null): string => {
   if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} month${diffInDays < 60 ? "" : "s"} ago`;
 
   return `${Math.floor(diffInDays / 365)} year${diffInDays < 730 ? "" : "s"} ago`;
-}
+};
+
 
 export const JobCardWrapper = ({
   jobData
@@ -100,7 +109,7 @@ export const JobCardWrapper = ({
           </div>
           <div>
             <Link
-              href="/job/192"
+              href={`/job/${jobData.job_id}`}
               className="bg-black dark:bg-slate-200 dark:text-black dark:hover:bg-slate-200/90 hover:bg-black/90 rounded-full text-white px-4 py-2"
             >
               Details

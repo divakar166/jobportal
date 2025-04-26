@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import * as z from "zod";
@@ -64,14 +65,13 @@ export const developerRegister = async (
 
   try {
     const response = await axios.post(
-      "https://jobportal-server-83v1.onrender.com/api/developer/register/",
+      "http://localhost:8000/api/developer/register/",
       {
         name,
         email,
         password,
       }
     );
-    console.log(response);
 
     if (response.status === 201) {
       const { message } = response.data;
@@ -84,6 +84,9 @@ export const developerRegister = async (
       const { data, status } = error.response;
 
       if (status === 400) {
+        if (data) {
+          return { error: data.error };
+        }
         return { error: "Invalid data. Please check your input." };
       }
       if (status === 409) {
