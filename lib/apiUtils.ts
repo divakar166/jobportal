@@ -49,3 +49,37 @@ export const fetchJobListingCount = async (token: string) => {
     return { error: "Failed to fetch job listing counts." };
   }
 };
+
+export const fetchJobById = async (jobId: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8000/api/jobs/job-id/${jobId}`
+    );
+
+    if (response.status === 200) {
+      const jobData = response.data;
+      return { jobData };
+    } else {
+      return { error: response.data.error || "Unknown error occurred." };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { error: "Failed to fetch job details." };
+  }
+};
+
+export const fetchLatestJobs = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8000/api/jobs/latest`);
+
+    if (response.status === 200) {
+      const jobData = response.data;
+      return { jobData };
+    } else {
+      return { error: response.data.error || "Unknown error occurred." };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { error: "Failed to fetch job details." };
+  }
+};
