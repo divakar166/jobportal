@@ -47,7 +47,6 @@ const DevLogin = () => {
           if (data?.success) {
             setSuccess(data?.success)
             dispatch(login({ userType: "developer", token: data.token, name: data.name }));
-            console.log("Dispatched login:", { userType: "developer", token: data.token, name: data.name });
             router.push('/dashboard/developer');
           } else {
             setError(data?.error)

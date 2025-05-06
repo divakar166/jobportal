@@ -129,8 +129,9 @@ const RecruiterRegisterForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="-91 952 158 1251"
+                      placeholder="+91 952 158 1251"
                       type="text"
+                      maxLength={10}
                     />
                   </FormControl>
                   <FormMessage />

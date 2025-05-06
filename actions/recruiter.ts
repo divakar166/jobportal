@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { RecruiterLoginSchema, RecruiterRegisterSchema } from "@/lib/schemas";
 import axios from "axios";
@@ -35,14 +36,6 @@ export const recruiterLogin = async (
       const { data, status } = error.response;
       if (status === 404) {
         return { error: "User doesn't exist!" };
-      }
-      if (status === 403) {
-        return {
-          error: "Email not verified. Please verify your email to continue.",
-        };
-      }
-      if (status === 401) {
-        return { error: "Incorrect password!" };
       }
       return { error: data.error || "Login failed! Please try again." };
     }

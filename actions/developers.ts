@@ -43,7 +43,7 @@ export const developerLogin = async (
         };
       }
       if (status === 401) {
-        return { error: "Incorrect password!" };
+        return { error: data.error };
       }
       return { error: data.error || "Login failed! Please try again." };
     }
@@ -76,6 +76,8 @@ export const developerRegister = async (
     if (response.status === 201) {
       const { message } = response.data;
       return { success: message };
+    } else if (response.status == 400) {
+      return { error: response.data.error || "Unknown error occurred." };
     } else {
       return { error: response.data.error || "Unknown error occurred." };
     }
